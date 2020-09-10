@@ -50,7 +50,6 @@ class download(Command):
         ('force', 'f',
          'download the shape file even if it already exists'),
     ]
-    boolean_options = ['force']
 
     def initialize_options(self):
         self.build_temp = None
@@ -93,7 +92,6 @@ class build_data(Command):
          'ignore build-lib and put compiled extensions into the source '
          'directory alongside your pure Python modules'),
     ]
-    boolean_options = ['force']
 
     def initialize_options(self):
         self.build_lib = None
@@ -135,7 +133,7 @@ with open('README.md') as file:
 
 setup(
     name='these-united-states',
-    version=f'1.0.0.{DATA_YEAR % 100}',
+    version=f'1.0.1.{DATA_YEAR % 100}',
     python_requires='>=3.6',
 
     packages=find_packages(include=['united_states']),
@@ -146,27 +144,30 @@ setup(
     },
 
     install_requires=[
-        'pyshp',
+        # pyshp v2.1.1 enabled logging of all warnings for all packages
+        # See https://github.com/GeospatialPython/pyshp/issues/203
+        'pyshp >= 2, < 3, != 2.1.1',
         'importlib_resources;python_version<"3.7"',
     ],
 
     extras_require={
-        'cli': ['click'],
-        'plot': ['matplotlib']
+        'cli': ['click >= 7.1, < 8'],
+        'plot': ['matplotlib >= 3.2, < 4']
     },
 
     setup_requires=[
-        'requests',
+        'requests >= 2.22, < 3',
         'setuptools',
+        'wheel',
     ],
 
     author='Brandon Carpenter',
     author_email='brandon@8minute.com',
+    url='https://bitbucket.org/8minutenergy/these-united-states',
     description='Utility library for performing reverse geocoding of states in the United States of America',
     long_description=long_description,
     long_description_content_type='text/markdown',
     license='BSD',
-    url='https://bitbucket.org/8minutenergy/these-united-states',
     zip_safe=True,
 
     classifiers=[
