@@ -82,6 +82,7 @@ def can_plot(ctx: click.Context, param: click.Parameter, value: Optional[bool]) 
     try:
         import matplotlib
     except ImportError:
+        assert param.name
         raise click.BadOptionUsage(param.name, 'plotting requires matplotlib', ctx=ctx)
     return value
 
