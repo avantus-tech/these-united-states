@@ -1,6 +1,6 @@
 # BSD 3-Clause License
 #
-# Copyright (c) 2020, 8minute Solar Energy LLC
+# Copyright (c) 2020, Avantus LLC
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -143,7 +143,7 @@ class UnitedStates(Sequence['State'], ReadOnlyMixin):
         - by_name:  Mapping of state names to states
 
     Additional, the UnitedStates object may be accessed as a sequence. The
-    from_coords() method may be used to find states by lattitude and longitude.
+    from_coords() method may be used to find states by latitude and longitude.
     """
 
     __slots__ = 'bbox', 'states', 'by_abbr', 'by_name'

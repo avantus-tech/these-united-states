@@ -11,7 +11,7 @@ readme = 'README.md'
 requires-python = '>=3.6'
 license = 'BSD-3-clause'
 authors = [
-    {name = 'Brandon Carpenter', email = 'brandon@8minute.com'},
+    {name = 'Brandon Carpenter', email = 'brandon@avantus.com'},
 ]
 keywords = [
     'geocoding',
@@ -41,7 +41,7 @@ dependencies = [
 
 
 [project.urls]
-'Source Code' = 'https://bitbucket.org/8minutenergy/these-united-states'
+'Source Code' = 'https://bitbucket.org/avantus/these-united-states'
 
 
 [project.optional-dependencies]
