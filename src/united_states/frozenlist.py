@@ -73,7 +73,7 @@ class FrozenList(Sequence[_T], ReadOnlyMixin):
     def __getitem__(self, item: slice) -> Sequence[_T]:
         pass
     def __getitem__(self, item: Union[int, slice]) -> Union[_T, Sequence[_T]]:
-        return object.__getattribute__(self, '_frozen_items').__getitem__(item)
+        return object.__getattribute__(self, '_frozen_items').__getitem__(item)  # type: ignore[no-any-return]
 
     def __contains__(self, item: Any) -> bool:
-        return object.__getattribute__(self, '_frozen_items').__contains__(item)
+        return object.__getattribute__(self, '_frozen_items').__contains__(item)  # type: ignore[no-any-return]

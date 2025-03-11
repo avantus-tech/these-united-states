@@ -140,6 +140,6 @@ class BBox(NamedTuple):
         """Return whether the point is within the bounding box."""
         try:
             x, y = point
-            return self.left <= x <= self.right and self.bottom <= y <= self.top
+            return not not (self.left <= x <= self.right and self.bottom <= y <= self.top)
         except (TypeError, ValueError):
             return False

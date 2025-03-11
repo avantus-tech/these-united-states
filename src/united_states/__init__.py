@@ -45,12 +45,10 @@ only.
 
 import enum
 import functools
-try:
-    from importlib import resources
-except ImportError:
-    import importlib_resources as resources  # type: ignore[no-redef]
+from importlib import resources
 import math
-from typing import Any, Callable, Iterator, List, Mapping, overload, Sequence, TypeVar, Union
+import sys
+from typing import Any, Callable, IO, Iterator, List, Mapping, overload, Sequence, TypeVar, Union
 import types
 import zipfile
 
@@ -61,6 +59,13 @@ from . import geometry
 
 
 _T = TypeVar('_T')
+
+
+if sys.version_info >= (3, 9):
+    def _open_binary(package: str, resource: str) -> IO[bytes]:
+        return resources.files(package).joinpath(resource).open('rb')
+else:
+    _open_binary = resources.open_binary
 
 
 class Region(enum.Enum):
@@ -104,16 +109,16 @@ class State(ReadOnlyMixin):
     points: Sequence[geometry.Point]
 
     def __init__(self, shape_record: shapefile.ShapeRecord) -> None:
-        record = shape_record.record
+        record = shape_record.record.as_dict()
         shape = shape_record.shape
-        set = lambda name, value: object.__setattr__(self, name, value)
-        set('region', Region(int(record[0])))
-        set('division', int(record[1]))
-        set('abbr', record[5])
-        set('name', record[6])
-        set('area_land', record[10])
-        set('area_water', record[11])
-        set('point', (float(record[13]), float(record[12])))
+        set: Callable[[str, Any], None] = lambda name, value: object.__setattr__(self, name, value)
+        set('region', Region(int(record['REGION'])))
+        set('division', int(record['DIVISION']))
+        set('abbr', record['STUSPS'])
+        set('name', record['NAME'])
+        set('area_land', record['ALAND'])
+        set('area_water', record['AWATER'])
+        set('point', (float(record['INTPTLON']), float(record['INTPTLAT'])))
         set('bbox', geometry.BBox(*shape.bbox))
         set('parts', FrozenList(shape.parts))
         set('points', FrozenList(shape.points))
@@ -142,7 +147,7 @@ class UnitedStates(Sequence['State'], ReadOnlyMixin):
         - by_abbr:  Mapping of state abbreviations to states
         - by_name:  Mapping of state names to states
 
-    Additional, the UnitedStates object may be accessed as a sequence. The
+    Additionally, the UnitedStates object may be accessed as a sequence. The
     from_coords() method may be used to find states by latitude and longitude.
     """
 
@@ -153,17 +158,16 @@ class UnitedStates(Sequence['State'], ReadOnlyMixin):
     by_abbr: Mapping[str, State]
     by_name: Mapping[str, State]
 
-    def __init__(self, filter: Callable[[State], bool] = None) -> None:
+    def __init__(self, filter: Union[Callable[[State], bool], None] = None) -> None:
         if filter is None:
             filter = lambda _: True
 
-        with resources.open_binary(__package__, 'shapes.zip') as fp, zipfile.ZipFile(fp) as zipper:
+        with _open_binary(__package__, 'shapes.zip') as fp, zipfile.ZipFile(fp) as zipper:
             shape_name, *_ = zipper.filelist[0].filename.rsplit('.', 1)
             with zipper.open(f'{shape_name}.dbf') as dbf, zipper.open(f'{shape_name}.shp') as shp, \
                     zipper.open(f'{shape_name}.shx') as shx, shapefile.Reader(dbf=dbf, shp=shp, shx=shx) as reader:
-                assert [name for name, *_ in reader.fields] == [
-                    'DeletionFlag', 'REGION', 'DIVISION', 'STATEFP', 'STATENS', 'GEOID', 'STUSPS',
-                    'NAME', 'LSAD', 'MTFCC', 'FUNCSTAT', 'ALAND', 'AWATER', 'INTPTLAT', 'INTPTLON']
+                assert not {'REGION', 'DIVISION', 'STUSPS', 'NAME',
+                            'ALAND', 'AWATER', 'INTPTLAT', 'INTPTLON'} - {name for name, *_ in reader.fields}
                 states = [st for st in (State(sr) for sr in reader.iterShapeRecords()) if filter(st)]
 
         if states:
@@ -172,7 +176,7 @@ class UnitedStates(Sequence['State'], ReadOnlyMixin):
             bbox = functools.reduce(geometry.BBox.__or__, (st.bbox for st in states))
         else:
             bbox = geometry.BBox(0.0, 0.0, 0.0, 0.0)
-        set = lambda name, value: object.__setattr__(self, name, value)
+        set: Callable[[str, Any], None] = lambda name, value: object.__setattr__(self, name, value)
         set('bbox', bbox)
         set('states', FrozenList(states))
         set('by_abbr', types.MappingProxyType({st.abbr: st for st in states}))
@@ -214,4 +218,4 @@ class UnitedStates(Sequence['State'], ReadOnlyMixin):
         three points for coordinates that lie on a boundary line.
         """
         point = lon, lat
-        return [st for st in self if point in st.bbox and point in st]
+        return [st for st in self if point in st.bbox and point in st]  # type: ignore[comparison-overlap]

@@ -20,9 +20,9 @@ log = logging.getLogger(__name__)
 class CustomBuildHook(BuildHookInterface):
     def initialize(self, version: str, build_data: Dict[str, Any]) -> None:
         year = self.config['year']
-        path = download(year, os.path.join(self.root, '.shapes'))
-        shutil.copyfile(path, os.path.join('united_states', 'shapes.zip'))
-        build_data['artifacts'] = ['/united_states/shapes.zip']
+        path = download(year, str(pathlib.Path(self.root, '.shapes')))
+        shutil.copyfile(path, pathlib.Path('src/united_states', 'shapes.zip'))
+        build_data['artifacts'] = ['/src/united_states/shapes.zip']
 
 
 def download(year: int, build_dir: str, force: bool = False) -> pathlib.Path:
