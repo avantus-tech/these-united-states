@@ -5,7 +5,7 @@ build-backend = 'hatchling.build'
 
 [project]
 name = 'these-united-states'
-version = '1.3.0.24'
+version = '1.3.0.26'
 description = 'Utility library for performing reverse geocoding of states in the United States of America'
 readme = 'README.md'
 requires-python = '>=3.9'
@@ -91,7 +91,7 @@ zip-safe = false  # Allow mypy to perform type checking using py.typed marker
 
 
 [tool.hatch.build.targets.wheel.hooks.custom]
-year = 2024  # Note: Update last component of version when changing the year
+year = 2026  # Note: Update last component of version when changing the year
 dependencies = [
     'requests',
 ]
