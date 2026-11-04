@@ -42,25 +42,22 @@ Usage: united_states [OPTIONS] [POINT]...
   Lookup U.S. states by coordinate (reverse geocoding).
 
 Options:
-  -b, --bbox / --no-bbox          Print state bounding boxes in listing
-                                  (implies -l/--list).
+  -b, --bbox / --no-bbox      Print state bounding boxes in listing (implies
+                              -l/--list).
+  -d, --dc / --no-dc          Include the District of Columbia.
+  -x, --exclude TEXT          Exclude states by abbreviation or name.
+  -h, --help                  Show this message and exit.
+  -i, --include TEXT          Include states by abbreviation or name.
+  -l, --list / --no-list      List included states.
+  -o, --oconus / --no-oconus  Include states outside the continental U.S.
+  -p, --plot / --no-plot      Plot the results (requires matplotlib).
+  -s, --seed FLOAT            Seed random number generator for color plot
+                              selection.
+  -t, --other / --no-other    Include Puerto Rico and the Island Areas.
 
-  -d, --dc / --no-dc              Include the District of Columbia.
-  -x, --exclude TEXT              Exclude states by abbreviation or name.
-  -h, --help                      Show this message and exit.
-  -i, --include TEXT              Include states by abbreviation or name.
-  -l, --list / --no-list          List included states.
-  -o, --oconus / --no-oconus      Include states outside the continental U.S.
-  -p, --plot / --no-plot          Plot the results (requires matplotlib).
-  -s, --seed FLOAT                Seed random number generator for color plot
-                                  selection.
-
-  -t, --territories / --no-territories
-                                  Include U.S. territories.
-
-  Options may be given multiple times. Options taking arguments are
-  additive. Multiple abbreviations or names may be provided in a single
-  option using a comma-separated list.
+  Options may be given multiple times. Options taking arguments are additive.
+  Multiple abbreviations or names may be provided in a single option using a
+  comma-separated list.
 ```
 
 ## License
