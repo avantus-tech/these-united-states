@@ -89,7 +89,7 @@ def can_plot(ctx: click.Context, param: click.Parameter, value: Optional[bool]) 
     return value
 
 
-class LatLon(click.ParamType):
+class LatLon(click.ParamType[Optional[Point]]):
     name = 'LatLon'
 
     def convert(self, value: Optional[Union[str, Point]],
