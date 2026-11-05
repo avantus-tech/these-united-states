@@ -35,6 +35,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.run-id }}
 
+      - name: Produce attestations
+        run: uv tool run pypi-attestations sign dist/*
+
       - name: Upload package to PyPI
         run: |
           uv publish --no-progress --trusted-publishing always ${{ inputs.test-release && '--publish-url https://test.pypi.org/legacy/' || '' }} 2>&1 | tee ./publish.out
